@@ -65,7 +65,8 @@ shift direction steps sList =
 
 
 {-| Shift selection forwards or backwards wrapping around as a circular array
-sList = fromLists ["a"] "b" [ "c", "d", "e"]
+
+    sList = fromLists ["a"] "b" [ "c", "d", "e"]
 
     cycleShift Forwards 4 sList -- [] "a" ["b", "c", "d", "e"]
 
@@ -93,17 +94,9 @@ cycleShift direction steps sList =
 {-| Build a select list from a single list and a selected element.
 If the provided element is not in the list, returns Nothing.
 
-    sList =
-        fromList "b" [ "a", "b", "c" ]
+    fromList "b" [ "a", "b", "c" ]  -- ["a"] "b" ["c"]
 
-
-    --["a"] "b" ["c"]
-
-    sList =
-        fromList "z" [ "a", "b", "c" ]
-
-
-    --Nothing
+    fromList "z" [ "a", "b", "c" ]  -- Nothing
 
 -}
 fromList : a -> List a -> Maybe (SelectList a)
