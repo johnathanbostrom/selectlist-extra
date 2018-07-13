@@ -41,9 +41,12 @@ step direction sList =
     in
         SelectList.select ((==) newSelected_) sList
 
-{-| Build a select list from a single list and a selected element. 
+{-| Build a select list from a single list and a selected element.
+If the provided element is not in the list, returns Nothing. 
 
-    sList = fromList "b" ["a", "b", "c"]  --["a"] "b" ["c"]
+    sList = fromList "b" ["a", "b", "c"] --["a"] "b" ["c"]
+    sList = fromList "z" ["a", "b", "c"] --Nothing
+
  -}
 fromList : a -> List a -> Maybe (SelectList a)
 fromList selected lst =
