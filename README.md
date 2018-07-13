@@ -1,4 +1,4 @@
-# Elm-SelectList-Extra
+# SelectList-Extra
 
 
 ### About:
