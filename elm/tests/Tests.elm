@@ -1,7 +1,7 @@
 module Tests exposing (..)
 
 import SelectList exposing (SelectList, fromLists)
-import SelectList.Extra exposing (step, StepDirection(..), fromList, selectAt)
+import SelectList.Extra exposing (step, StepDirection(..), fromList, selectAt, cycleShift)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Test exposing (..)
@@ -132,3 +132,33 @@ mkSelectAtTest description element sList expected =
                     selectAt element sList
             in
                 Expect.equal newSList expected
+
+
+cycleShiftTests : Test
+cycleShiftTests =
+    let
+        sList =
+            fromLists [ "a", "b", "c" ] "d" [ "e" ]
+    in
+        describe "the cycleShift function"
+            [ test "move forward" <|
+                \_ ->
+                    let
+                        newSList =
+                            cycleShift Forwards 3 sList
+
+                        expected =
+                            fromLists [ "a" ] "b" [ "c", "d", "e" ]
+                    in
+                        Expect.equal newSList expected
+            , test "move back" <|
+                \_ ->
+                    let
+                        newSList =
+                            cycleShift Backwards 9 sList
+
+                        expected =
+                            fromLists [ "a", "b", "c", "d" ] "e" []
+                    in
+                        Expect.equal newSList expected
+            ]

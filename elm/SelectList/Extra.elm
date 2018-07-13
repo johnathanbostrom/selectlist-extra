@@ -4,6 +4,8 @@ module SelectList.Extra
         , fromList
         , selectAt
         , StepDirection(Forwards, Backwards)
+        , shift
+        , cycleShift
         )
 
 {-| A library of SelectList helpers.
@@ -11,7 +13,7 @@ module SelectList.Extra
 
 # Helpers
 
-@docs step, fromList, selectAt
+@docs step, shift, cycleShift, fromList, selectAt
 
 
 # Types
@@ -35,16 +37,57 @@ If there are no more elements in the step direction, returns an unmodified selec
 -}
 step : StepDirection -> SelectList a -> SelectList a
 step direction sList =
+    shift direction 1 sList
+
+
+{-| Shift selection forwards or backwards.
+If there are not enough elements in the step direction, returns an unmodified select list.
+
+    sList = fromLists ["a"] "b" [ "c", "d", "e"]
+
+    shift Forwards 2 sList -- ["a", "b", "c"] "d" ["e"]
+    shift Backwards 1 sList  -- [] "a" ["b", "c", "d", "e"]
+    shift Forwards 6 sList -- ["a"] "b" [ "c", "d", "e"]
+
+-}
+shift : StepDirection -> Int -> SelectList a -> SelectList a
+shift direction steps sList =
     let
         currentIndex =
             List.length <| SelectList.before sList
     in
         case direction of
             Forwards ->
-                selectAt (currentIndex + 1) sList
+                selectAt (currentIndex + steps) sList
 
             Backwards ->
-                selectAt (currentIndex - 1) sList
+                selectAt (currentIndex - steps) sList
+
+
+{-| Shift selection forwards or backwards wrapping around as a circular array
+sList = fromLists ["a"] "b" [ "c", "d", "e"]
+
+    cycleShift Forwards 4 sList -- [] "a" ["b", "c", "d", "e"]
+
+-}
+cycleShift : StepDirection -> Int -> SelectList a -> SelectList a
+cycleShift direction steps sList =
+    let
+        len =
+            (List.length <| SelectList.before sList) + (List.length <| SelectList.after sList) + 1
+
+        currentIndex =
+            List.length <| SelectList.before sList
+
+        nextIndex =
+            case direction of
+                Forwards ->
+                    (currentIndex + steps) % len
+
+                Backwards ->
+                    (currentIndex - steps) % len
+    in
+        selectAt nextIndex sList
 
 
 {-| Build a select list from a single list and a selected element.
