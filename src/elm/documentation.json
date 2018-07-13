@@ -1,0 +1,42 @@
+[
+  {
+    "name": "SelectList.Extra",
+    "comment": " A library of SelectList helpers.\n\n# Helpers\n@docs step, fromList, selectAt\n\n# Types\n@docs StepDirection\n",
+    "aliases": [],
+    "types": [
+      {
+        "name": "StepDirection",
+        "comment": " Step direction used with step function. \n",
+        "args": [],
+        "cases": [
+          [
+            "Forwards",
+            []
+          ],
+          [
+            "Backwards",
+            []
+          ]
+        ]
+      }
+    ],
+    "values": [
+      {
+        "name": "fromList",
+        "comment": " Build a select list from a single list and a selected element. \n\n    sList = fromList \"b\" [\"a\", \"b\", \"c\"]  --[\"a\"] \"b\" [\"c\"]\n ",
+        "type": "a -> List a -> Maybe.Maybe (SelectList.SelectList a)"
+      },
+      {
+        "name": "selectAt",
+        "comment": " Select the element at the given index. \nreturns unchaged select list if index is invalid.\n\n    sList = fromLists [\"a\", \"b\", \"c\"] \"d\" []\n\n    selectAt -1 sList  -- [\"a\", \"b\", \"c\"] \"d\" []\n    selectAt 1 sList  -- [\"a\"] \"b\" [\"c\", \"d\"]\n ",
+        "type": "Int -> SelectList.SelectList a -> SelectList.SelectList a"
+      },
+      {
+        "name": "step",
+        "comment": " Step your selection forwards (increment by one) or backwards (decrement by one) through your list.\nIf there are no more elements in the step direction, returns an unmodified select list.\n\n    sList = fromLists [\"a\", \"b\", \"c\"] \"d\" []\n    \n    step Forwards sList -- [\"a\", \"b\", \"c\"] \"d\" []\n    step Backwards sList  -- [\"a\", \"b\"] \"c\" [\"d\"]\n ",
+        "type": "SelectList.Extra.StepDirection -> SelectList.SelectList a -> SelectList.SelectList a"
+      }
+    ],
+    "generated-with-elm-version": "0.18.0"
+  }
+]
