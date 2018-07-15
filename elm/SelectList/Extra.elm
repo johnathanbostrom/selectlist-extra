@@ -123,27 +123,70 @@ returns unchaged select list if index is invalid.
 
 -}
 selectAt : Int -> SelectList a -> SelectList a
-selectAt index sLst =
+selectAt index sList =
     let
-        lst =
-            SelectList.toList sLst
+        beforeLen =
+            List.length <| SelectList.before sList
 
-        selected =
-            getAt index lst
+        afterLen =
+            List.length <| SelectList.before sList
+
+        currentSelectedIndex =
+            beforeLen
+
+        len =
+            beforeLen + afterLen + 1
     in
-        case selected of
-            Just selected_ ->
-                let
-                    ( before, after ) =
-                        splitAt index lst
-                in
-                    SelectList.fromLists
-                        before
-                        selected_
-                        (List.drop 1 after)
+        case compare index currentSelectedIndex of
+            EQ ->
+                sList
 
-            Nothing ->
-                sLst
+            LT ->
+                let
+                    selected =
+                        getAt index (SelectList.before sList)
+                in
+                    case selected of
+                        Just selected_ ->
+                            let
+                                ( before, after ) =
+                                    splitAt index (SelectList.before sList)
+
+                                after_ =
+                                    (List.drop 1 after) ++ [ SelectList.selected sList ] ++ SelectList.after sList
+                            in
+                                SelectList.fromLists
+                                    before
+                                    selected_
+                                    after_
+
+                        Nothing ->
+                            sList
+
+            GT ->
+                let
+                    afterIndex =
+                        index - (beforeLen + 1)
+
+                    selected =
+                        getAt afterIndex (SelectList.after sList)
+                in
+                    case selected of
+                        Just selected_ ->
+                            let
+                                ( before, after ) =
+                                    splitAt afterIndex (SelectList.after sList)
+
+                                before_ =
+                                    SelectList.before sList ++ [ SelectList.selected sList ] ++ before
+                            in
+                                SelectList.fromLists
+                                    before_
+                                    selected_
+                                    (List.drop 1 after)
+
+                        Nothing ->
+                            sList
 
 
 {-| Step direction used with step function.
