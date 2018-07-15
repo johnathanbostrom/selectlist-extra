@@ -127,17 +127,8 @@ selectAt index sList =
     let
         beforeLen =
             List.length <| SelectList.before sList
-
-        afterLen =
-            List.length <| SelectList.before sList
-
-        currentSelectedIndex =
-            beforeLen
-
-        len =
-            beforeLen + afterLen + 1
     in
-        case compare index currentSelectedIndex of
+        case compare index beforeLen of
             EQ ->
                 sList
 
@@ -148,7 +139,9 @@ selectAt index sList =
                 in
                     case beforeSList of
                         Just beforeSList_ ->
-                            SelectList.append (SelectList.after sList) <| SelectList.append [ SelectList.selected sList ] beforeSList_
+                            beforeSList_
+                                |> SelectList.append [ SelectList.selected sList ]
+                                |> SelectList.append (SelectList.after sList)
 
                         Nothing ->
                             sList
@@ -163,7 +156,9 @@ selectAt index sList =
                 in
                     case afterSList of
                         Just afterSList_ ->
-                            SelectList.prepend (SelectList.before sList) <| SelectList.prepend [ SelectList.selected sList ] afterSList_
+                            afterSList_
+                                |> SelectList.prepend [ SelectList.selected sList ]
+                                |> SelectList.prepend (SelectList.before sList)
 
                         Nothing ->
                             sList
