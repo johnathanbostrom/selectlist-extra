@@ -143,22 +143,12 @@ selectAt index sList =
 
             LT ->
                 let
-                    selected =
-                        getAt index (SelectList.before sList)
+                    beforeSList =
+                        fromListAt index (SelectList.before sList)
                 in
-                    case selected of
-                        Just selected_ ->
-                            let
-                                ( before, after ) =
-                                    splitAt index (SelectList.before sList)
-
-                                after_ =
-                                    (List.drop 1 after) ++ [ SelectList.selected sList ] ++ SelectList.after sList
-                            in
-                                SelectList.fromLists
-                                    before
-                                    selected_
-                                    after_
+                    case beforeSList of
+                        Just beforeSList_ ->
+                            SelectList.append (SelectList.after sList) <| SelectList.append [ SelectList.selected sList ] beforeSList_
 
                         Nothing ->
                             sList
@@ -168,25 +158,36 @@ selectAt index sList =
                     afterIndex =
                         index - (beforeLen + 1)
 
-                    selected =
-                        getAt afterIndex (SelectList.after sList)
+                    afterSList =
+                        fromListAt afterIndex (SelectList.after sList)
                 in
-                    case selected of
-                        Just selected_ ->
-                            let
-                                ( before, after ) =
-                                    splitAt afterIndex (SelectList.after sList)
-
-                                before_ =
-                                    SelectList.before sList ++ [ SelectList.selected sList ] ++ before
-                            in
-                                SelectList.fromLists
-                                    before_
-                                    selected_
-                                    (List.drop 1 after)
+                    case afterSList of
+                        Just afterSList_ ->
+                            SelectList.prepend (SelectList.before sList) <| SelectList.prepend [ SelectList.selected sList ] afterSList_
 
                         Nothing ->
                             sList
+
+
+fromListAt : Int -> List a -> Maybe (SelectList a)
+fromListAt index lst =
+    let
+        selected =
+            getAt index lst
+
+        ( before, after ) =
+            splitAt index lst
+    in
+        case selected of
+            Just selected_ ->
+                Just <|
+                    SelectList.fromLists
+                        before
+                        selected_
+                        (List.drop 1 after)
+
+            Nothing ->
+                Nothing
 
 
 {-| Step direction used with step function.
